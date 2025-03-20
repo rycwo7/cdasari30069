@@ -40,12 +40,12 @@ namespace Game
         private Scene MainScene = null;
         private Box boxGround = null;
         Sphere sphere = null;
-        string skyBoxMaterialPath = "Resource/Material/SkyBox.material";
-        string skyDomeMaterialPath = "Resource/Material/SkyDome.material";
-        string cubeMaterialPath = "Resource/Material/CubeMaterial.material";
-        string sphereMaterialPath = "Resource/Material/SphereMaterial.material";
-        string particleFirePath = "Resource/Particle/ParticleFire.particle";
-        string mainScenePath = "Resource/Scene/MainEntry.scene";
+        string skyBoxMaterialPath = "Material/SkyBox.material";
+        string skyDomeMaterialPath = "Material/SkyDome.material";
+        string cubeMaterialPath = "Material/CubeMaterial.material";
+        string sphereMaterialPath = "Material/SphereMaterial.material";
+        string particleFirePath = "Particle/ParticleFire.particle";
+        string mainScenePath = "Scene/MainEntry.scene";
         Vector2 curMousePosition;
         Vector2 lastMousePosition;
         float cameraRotateX = 0, cameraRotateY = 0;
@@ -70,7 +70,7 @@ namespace Game
             pLight.Range = 100;
             pLight.Color = new Vector4(1, 1, 1, 1.0f);
             pLight.Transform.Position = new Vector3(0, 0, 50);
-            //Material skyMaterial = Resource.Load(skyDomeMaterialPath) as Material;
+            //Material skyMaterial = Resource.Load<Material>(skyDomeMaterialPath);
             //GameObject.CreateSkyDome(skyMaterial);
             //GameObject.CreateSkyBox(skyMaterial);
             //Debug.Log(material.ID.ToString());
@@ -82,7 +82,7 @@ namespace Game
                 for (int j = 0; j < 15 - i; j++)
                 {
                     Box box = Box.Create(1, 1, 1);
-                    Material material = Resource.Load(cubeMaterialPath) as Material;
+                    Material material = Resource.Load<Material>(cubeMaterialPath);
                     box.AddComponent<App.CubeComponent>();
                     box.Material = material; 
                     box.Transform.Position = new Vector3(xStart + 2 * j, yStart - i * 2, 0);
@@ -93,34 +93,34 @@ namespace Game
             }
 
             //boxGround = Box.Create(50, 10, 0.5f);
-            //Material materialG = Resource.Load(cubeMaterialPath) as Material;
+            //Material materialG = Resource.Load<Material>(cubeMaterialPath);
             //boxGround.Material = materialG;
             //boxGround.Transform.Position = new Vector3(0, 0, 0);
             //boxGround.Transform.Rotation = new Vector3(0, 0, 20);
             //boxGround.Active = true;
             //BoxCollider collider3 = boxGround.AddComponent<BoxCollider>();
             //collider3.CreateRigiBody(0);
-            Material materialS = Resource.Load(sphereMaterialPath) as Material;
+            Material materialS = Resource.Load<Material>(sphereMaterialPath);
             sphere = Sphere.Create(20);
             sphere.Material = materialS;
             sphere.Transform.Position = new Vector3(-30, 40, 0);
             SphereCollider sCollider = sphere.AddComponent<SphereCollider>();
             sCollider.CreateRigiBody(0);
-            Material materialB = Resource.Load(cubeMaterialPath) as Material;
+            Material materialB = Resource.Load<Material>(cubeMaterialPath);
             Box box1 = Box.Create(3, 3, 3);
             box1.Material = materialB;
             box1.Transform.Position = new Vector3(2.5f, 5, 0);
             BoxCollider collider4 = box1.AddComponent<BoxCollider>();
             collider4.CreateRigiBody(0);
 
-            Material materialB2 = Resource.Load(cubeMaterialPath) as Material;
+            Material materialB2 = Resource.Load<Material>(cubeMaterialPath);
             Box box2 = Box.Create(50, 10, 0.5f);
             box2.Material = materialB2;
             box2.Transform.Position = new Vector3(-25f, 15, 0);
             box2.Transform.Rotation = new Vector3(0, 0, -20);
             BoxCollider collider5 = box2.AddComponent<BoxCollider>();
             collider5.CreateRigiBody(0);
-            particle = Resource.Load(particleFirePath) as ParticleSystem;
+            particle = Resource.Load<ParticleSystem>(particleFirePath);
 
             Vector3 nwPos = new Vector3(box1.Transform.Position.x - 1, box1.Transform.Position.y - 1.1f, box1.Transform.Position.z);
             for (int i = 0; i < particle.Particles.Length; i++)
@@ -133,11 +133,11 @@ namespace Game
         {
             lastMousePosition.x = mouseInfo.mPositionX;
             lastMousePosition.y = mouseInfo.mPositionY;
-            if (mouseInfo.mButton == MouseButton.eRightButton)
+            if (mouseInfo.mButton == MouseButton.RightButton)
             {
                 mouseRButtonDown = true;
             }
-            else if(mouseInfo.mButton == MouseButton.eMiddleButton)
+            else if(mouseInfo.mButton == MouseButton.MiddleButton)
             {
                 mouseMButtonDown = true;
             }
@@ -145,15 +145,16 @@ namespace Game
 
         public void MouseButtonUp(MouseButtonInfo mouseInfo)
         {
-            if (mouseInfo.mButton == MouseButton.eRightButton)
+            if (mouseInfo.mButton == MouseButton.RightButton)
             {
                 mouseRButtonDown = false;
             }
-            else if(mouseInfo.mButton == MouseButton.eMiddleButton)
+            else if(mouseInfo.mButton == MouseButton.MiddleButton)
             {
                 mouseMButtonDown = false;
             }
         }
+
         Vector3 curPos = new Vector3();
         public void MouseMove(MouseButtonInfo mouseInfo)
         {
@@ -183,6 +184,7 @@ namespace Game
                 MainCamera.Transform.Position = newPos;
             }
         }
+
         public void Update(float deltaTime)
         {
             rotate.y += 1;
@@ -195,40 +197,41 @@ namespace Game
 
         Vector3 curCameraPos = new Vector3();
         Vector3 curCameraDir = new Vector3();
-        private void KeyDown(char key)
+
+        private void KeyDown(KeyCode keyCode)
         {
             curCameraPos = MainCamera.Transform.Position;
-            if (key == 'w' || key == 'W')
+            if (keyCode == KeyCode.KeyW)
             {
                 curCameraDir = MainCamera.Forward;
                 curCameraDir.Normalize();
                 MainCamera.Transform.Position = curCameraPos + curCameraDir;
             }
-            else if(key == 's' || key == 'S')
+            else if(keyCode == KeyCode.KeyS)
             {
                 curCameraDir = MainCamera.Forward * -1;
                 curCameraDir.Normalize();
                 MainCamera.Transform.Position = curCameraPos + curCameraDir;
             }
-            else if(key == 'a' || key == 'A')
+            else if(keyCode == KeyCode.KeyA)
             {
                 curCameraDir = MainCamera.Right * -1;
                 curCameraDir.Normalize();
                 MainCamera.Transform.Position = curCameraPos + curCameraDir;
             }
-            else if (key == 'd' || key == 'D')
+            else if (keyCode == KeyCode.KeyD)
             {
                 curCameraDir = MainCamera.Right;
                 curCameraDir.Normalize();
                 MainCamera.Transform.Position = curCameraPos + curCameraDir;
             }
-            else if (key == 'e' || key == 'E')
+            else if (keyCode == KeyCode.KeyE)
             {
                 curCameraDir = MainCamera.Up;
                 curCameraDir.Normalize();
                 MainCamera.Transform.Position = curCameraPos + curCameraDir;
             }
-            else if (key == 'q' || key == 'Q')
+            else if (keyCode == KeyCode.KeyQ)
             {
                 curCameraDir = MainCamera.Up * -1;
                 curCameraDir.Normalize();
